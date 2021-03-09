@@ -6,4 +6,5 @@
     <string name="save_text">save</string>
     <string name="delete_text">delete</string>
     <string name="place_text">Place</string>
+    <string name="image_text">get image</string>
 </resources>

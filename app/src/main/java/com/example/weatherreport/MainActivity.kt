@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import io.realm.Realm
 import io.realm.Sort
 
@@ -18,6 +19,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var realm: Realm       // Realmのインスタンスrealmを宣言
     private lateinit var adapter: CustomRecyclerViewAdapter
     private lateinit var layoutManager: RecyclerView.LayoutManager
+
+    private val RESULT_PICK_IMAGEFILE = 1000
+    private val imageView: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
