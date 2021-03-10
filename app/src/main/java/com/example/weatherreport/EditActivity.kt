@@ -10,7 +10,6 @@ import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_edit.*
 import java.util.*
 import android.content.Intent
-import android.R
 import android.view.View
 
 
@@ -28,12 +27,12 @@ class EditActivity : AppCompatActivity() {
 
         imageView = findViewById(R.id.image_view) as ImageView
 
-        findViewById<View>(R.id.button2).setOnClickListener(object : View.OnClickListener() {
-            fun onClick(v: View) {
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        findViewById<View>(R.id.imageBtn).setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View) {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)        // ボタンクリック時に画像フォルダを開く
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 intent.type = "image/*"
-                startActivityForResult(intent, RESULT_PICK_IMAGEFILE)
+                startActivityForResult(intent, RESULT_PICK_IMAGEFILE)   // 画像を取得
             }
         })
 
