@@ -1,5 +1,6 @@
 package com.example.weatherreport
 
+import android.app.Activity
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
@@ -11,6 +12,11 @@ import kotlinx.android.synthetic.main.activity_edit.*
 import java.util.*
 import android.content.Intent
 import android.view.View
+import android.graphics.BitmapFactory
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.ParcelFileDescriptor
+import io.realm.internal.IOException
 
 
 class EditActivity : AppCompatActivity() {
@@ -62,6 +68,32 @@ class EditActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, "保存しました", Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
+
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
+        if (requestCode == RESULT_PICK_IMAGEFILE && resultCode == Activity.RESULT_OK) {
+            var uri: Uri? = null
+            if (resultData != null) {
+                uri = resultData.data       // resultDataの中身は画像パス
+
+                try {
+                    val bmp = getBitmapFromUri(uri)     // 画像パスからBitmapを作成
+                    imageView?.setImageBitmap(bmp)      // BitmapをLayoutのImageViewにセット
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+            }
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun getBitmapFromUri(uri: Uri?): Bitmap {
+        val parcelFileDescriptor = contentResolver.openFileDescriptor(uri!!, "r")
+        val fileDescriptor = parcelFileDescriptor!!.fileDescriptor
+        val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+        parcelFileDescriptor.close()
+        return image
     }
 
     override fun onDestroy() {
