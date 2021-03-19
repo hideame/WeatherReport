@@ -31,6 +31,17 @@ class EditActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit)
         realm = Realm.getDefaultInstance()
 
+        val bpId = intent.getLongExtra("id",0L)
+        if (bpId > 0L) {
+            val weatherReport = realm.where<WeatherReport>().equalTo("id", bpId).findFirst()
+            titleEdit.setText(weatherReport?.title.toString())
+            placeEdit.setText(weatherReport?.place.toString())
+            nameEdit.setText(weatherReport?.name.toString())
+            deleteBtn.visibility = View.VISIBLE
+        } else {
+            deleteBtn.visibility = View.INVISIBLE       // データがない場合は削除ボタンを表示しない
+        }
+
         imageView = findViewById(R.id.image_view) as ImageView
 
         findViewById<View>(R.id.imageBtn).setOnClickListener(object : View.OnClickListener {
@@ -56,16 +67,38 @@ class EditActivity : AppCompatActivity() {
             if (!nameEdit.text.isNullOrEmpty()) {
                 name = nameEdit.text.toString()
             }
-            realm.executeTransaction {
-                val maxId = realm.where<WeatherReport>().max("id")
-                val nextId = (maxId?.toLong() ?: 0L) + 1L
-                val weatherReport = realm.createObject<WeatherReport>(nextId)
-                weatherReport.dateTime = Date()
-                weatherReport.title = title
-                weatherReport.place = place
-                weatherReport.name = name
+
+            when (bpId) {
+                0L -> {
+                    realm.executeTransaction {
+                        val maxId = realm.where<WeatherReport>().max("id")
+                        val nextId = (maxId?.toLong() ?: 0L) + 1L
+                        val weatherReport = realm.createObject<WeatherReport>(nextId)
+                        weatherReport.dateTime = Date()
+                        weatherReport.title = title
+                        weatherReport.place = place
+                        weatherReport.name = name
+                    }
+                }
+                // 修正処理
+                else -> {
+                    realm.executeTransaction {
+                        val weatherReport = realm.where<WeatherReport>().equalTo("id", bpId).findFirst()
+                        weatherReport?.title = title
+                        weatherReport?.place = place
+                        weatherReport?.name = name
+                    }
+                }
             }
             Toast.makeText(applicationContext, "保存しました", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
+        deleteBtn.setOnClickListener {
+            realm.executeTransaction {
+                val weatherReport = realm.where<WeatherReport>().equalTo("id", bpId)?.findFirst()?.deleteFromRealm()
+            }
+            Toast.makeText(applicationContext, "削除しました", Toast.LENGTH_SHORT).show()
             finish()
         }
     }

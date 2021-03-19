@@ -1,5 +1,6 @@
 package com.example.weatherreport
 
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateFormat
 import android.view.LayoutInflater
@@ -25,5 +26,10 @@ class CustomRecyclerViewAdapter(realmResults: RealmResults<WeatherReport>) : Rec
         holder.titleText?.text = weatherReport?.title.toString()
         holder.placeText?.text = weatherReport?.place.toString()
         holder.nameText?.text = weatherReport?.name.toString()
+        holder.itemView.setOnClickListener{
+            val intent = Intent(it.context, EditActivity::class.java)
+            intent.putExtra("id", weatherReport?.id)
+            it.context.startActivity(intent)
+        }
     }
 }
